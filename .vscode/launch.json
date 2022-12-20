@@ -32,8 +32,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/home/logbaby/c++/drill-coin-test",
-      "program": "/home/logbaby/c++/drill-coin-test/build/Debug/outDebug",
+      "cwd": "/home/logbaby/c++/termuxii",
+      "program": "/home/logbaby/c++/termuxii/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

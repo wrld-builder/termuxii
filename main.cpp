@@ -1,4 +1,5 @@
 #include "ecc.h"
+#include "exceptions.h"
 
 #if DEBUG
 #include <iostream>
@@ -7,9 +8,9 @@
 using EllipticCurveCryptography::FieldElement;
 
 int main() {
-  auto a = std::make_shared<FieldElement>(33, 57);
-  auto b = std::make_shared<FieldElement>(44, 57);
+  auto a = std::make_shared<FieldElement>(3, 31);
+  auto b = std::make_shared<FieldElement>(24, 31);
 
-  auto c = *a.get() + b;
+  auto c = *a / b;
   c->PrintFieldElement();
 }
