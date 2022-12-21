@@ -24,13 +24,13 @@ EllipticCurveCryptography::FieldElement::FieldElement(const int& number, const i
 
 EllipticCurveCryptography::FieldElement::~FieldElement() {}
 
-bool EllipticCurveCryptography::FieldElement::operator==(std::shared_ptr<FieldElement> other) {
+bool EllipticCurveCryptography::FieldElement::operator==(const std::shared_ptr<FieldElement> other) {
   if (other == nullptr) return false;
 
   return other->number == this->number && other->prime == this->prime;
 }
 
-bool EllipticCurveCryptography::FieldElement::operator!=(std::shared_ptr<FieldElement> other) { return !(other.get() == this); }
+bool EllipticCurveCryptography::FieldElement::operator!=(const std::shared_ptr<FieldElement> other) { return !(other.get() == this); }
 
 std::shared_ptr<EllipticCurveCryptography::FieldElement> EllipticCurveCryptography::FieldElement::operator+(
     std::shared_ptr<EllipticCurveCryptography::FieldElement> other) {
@@ -47,7 +47,7 @@ std::shared_ptr<EllipticCurveCryptography::FieldElement> EllipticCurveCryptograp
 }
 
 std::shared_ptr<EllipticCurveCryptography::FieldElement> EllipticCurveCryptography::FieldElement::operator-(
-    std::shared_ptr<FieldElement> other) {
+    const std::shared_ptr<FieldElement> other) {
   try {
     if (this->prime != other->prime) throw OverrideExceptions::SubInDifferentFields();
   } catch (OverrideExceptions::SubInDifferentFields& exception) {
@@ -65,7 +65,7 @@ std::shared_ptr<EllipticCurveCryptography::FieldElement> EllipticCurveCryptograp
 }
 
 std::shared_ptr<EllipticCurveCryptography::FieldElement> EllipticCurveCryptography::FieldElement::operator*(
-    std::shared_ptr<FieldElement> other) {
+    const std::shared_ptr<FieldElement> other) {
   try {
     if (this->prime != other->prime) throw OverrideExceptions::MulInDifferentFields();
   } catch (OverrideExceptions::MulInDifferentFields& exception) {
@@ -79,14 +79,14 @@ std::shared_ptr<EllipticCurveCryptography::FieldElement> EllipticCurveCryptograp
 }
 
 std::shared_ptr<EllipticCurveCryptography::FieldElement> EllipticCurveCryptography::FieldElement::operator/(
-    std::shared_ptr<FieldElement> other) {
+    const std::shared_ptr<FieldElement> other) {
   try {
     if (this->prime != other->prime) throw OverrideExceptions::TrueDivInDifferentFields();
   } catch (OverrideExceptions::TrueDivInDifferentFields& exception) {
 #if DEBUG
     std::cerr << exception.what() << std::endl;
 #endif
-    std::exit(EXCEPTION_MUL_IN_DIFF_FIELDS_CODE);
+    std::exit(EXCEPTION_TRUEDIV_IN_DIFF_FIELDS_CODE);
   }
 
   return std::make_shared<FieldElement>(
@@ -113,3 +113,25 @@ int EllipticCurveCryptography::FieldElement::trueDivModuleExp(const int& x, cons
   else
     return (x * z * z) % N;
 }
+
+EllipticCurveCryptography::Point::Point(const int& x, const int& y, const int& a, const int& b) {
+  this->x = x;
+  this->y = y;
+  this->a = a;
+  this->b = b;
+
+  try {
+    if (std::pow(y, 2) != std::pow(this->x, 3) + a * x + b) throw OverrideExceptions::PointNotOntheCurve();
+  } catch (OverrideExceptions::PointNotOntheCurve& exception) {
+#if DEBUG
+    std::cerr << exception.what() << std::endl;
+#endif
+    std::exit(EXCEPTION_POINT_NOT_IN_THE_CURVE_CODE);
+  }
+}
+
+bool EllipticCurveCryptography::Point::operator==(const std::shared_ptr<Point> other) {
+  return this->x == other->x && this->y == other->y && this->a == other->a && this->b == other->b;
+}
+
+bool EllipticCurveCryptography::Point::operator!=(const std::shared_ptr<Point> other) { return !(this == other.get()); }

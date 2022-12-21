@@ -13,7 +13,9 @@
 #define EXCEPTION_MUL_IN_DIFF_FIELDS "Exception: trying to __mul__ element in different fields"
 #define EXCEPTION_MUL_IN_DIFF_FIELDS_CODE 5
 #define EXCEPTION_TRUEDIV_IN_DIFF_FIELDS "Exception: trying to __truediv__ element in different fields"
-#define EXCEPTION_TRUEDIV_IN_DIFF_FIELDS_CODE 5
+#define EXCEPTION_TRUEDIV_IN_DIFF_FIELDS_CODE 6
+#define EXCEPTION_POINT_NOT_IN_THE_CURVE "Exception: point is not on the curve"
+#define EXCEPTION_POINT_NOT_IN_THE_CURVE_CODE 7
 
 namespace OverrideExceptions {
 
@@ -45,6 +47,11 @@ class MulInDifferentFields : public std::exception {
 class TrueDivInDifferentFields : public std::exception {
  public:
   inline const char* what() const noexcept override { return EXCEPTION_TRUEDIV_IN_DIFF_FIELDS; }
+};
+
+class PointNotOntheCurve : public std::exception {
+ public:
+  inline const char* what() const noexcept override { return EXCEPTION_POINT_NOT_IN_THE_CURVE; }
 };
 
 }  // namespace OverrideExceptions

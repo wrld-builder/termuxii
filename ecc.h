@@ -8,17 +8,17 @@ class FieldElement {
 
   ~FieldElement();
 
-  bool operator==(std::shared_ptr<FieldElement> other);  // is equal two field elements
+  bool operator==(const std::shared_ptr<FieldElement> other);  // is equal two field elements
 
-  bool operator!=(std::shared_ptr<FieldElement> other);  // is not equal two field elements
+  bool operator!=(const std::shared_ptr<FieldElement> other);  // is not equal two field elements
 
-  std::shared_ptr<FieldElement> operator+(std::shared_ptr<FieldElement> other);  // addition of two field elements
+  std::shared_ptr<FieldElement> operator+(const std::shared_ptr<FieldElement> other);  // addition of two field elements
 
-  std::shared_ptr<FieldElement> operator-(std::shared_ptr<FieldElement> other);  // sub of two field elements
+  std::shared_ptr<FieldElement> operator-(const std::shared_ptr<FieldElement> other);  // sub of two field elements
 
-  std::shared_ptr<FieldElement> operator*(std::shared_ptr<FieldElement> other);  // multiply of two field elements
+  std::shared_ptr<FieldElement> operator*(const std::shared_ptr<FieldElement> other);  // multiply of two field elements
 
-  std::shared_ptr<FieldElement> operator/(std::shared_ptr<FieldElement> other);  // truediv of two field elements
+  std::shared_ptr<FieldElement> operator/(const std::shared_ptr<FieldElement> other);  // truediv of two field elements
 
   std::shared_ptr<FieldElement> Pow(const int& exponent);  // pow the field element
 
@@ -30,6 +30,23 @@ class FieldElement {
 
  protected:
   static int trueDivModuleExp(const int& x, const int& y, const int& N);  // modeExp true div with %
+};
+
+class Point {
+ public:
+  explicit Point(const int& x, const int& y, const int& a, const int& b);
+
+  inline ~Point(){};
+
+  bool operator==(const std::shared_ptr<Point> other);
+
+  bool operator!=(const std::shared_ptr<Point> other);
+
+ private:
+  int x = 0;  // X coordinate
+  int y = 0;  // Y coordinate
+  int a = 0;  // a coefficient
+  int b = 0;  // b coefficient
 };
 
 }  // namespace EllipticCurveCryptography
