@@ -94,7 +94,9 @@ std::shared_ptr<EllipticCurveCryptography::FieldElement> EllipticCurveCryptograp
 }
 
 std::shared_ptr<EllipticCurveCryptography::FieldElement> EllipticCurveCryptography::FieldElement::Pow(const int& exponent) {
-  return std::make_shared<FieldElement>(static_cast<int>(std::pow(this->number, exponent)) % this->prime, this->prime);
+  int N = exponent % (this->prime - 1);
+
+  return std::make_shared<FieldElement>(trueDivModuleExp(this->number, N, this->prime), this->prime);
 }
 
 void EllipticCurveCryptography::FieldElement::PrintFieldElement() {

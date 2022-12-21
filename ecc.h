@@ -29,7 +29,7 @@ class FieldElement {
   int prime = 0;
 
  protected:
-  int trueDivModuleExp(const int& x, const int& y, const int& N);  // modeExp true div with %
+  static int trueDivModuleExp(const int& x, const int& y, const int& N);  // modeExp true div with %
 };
 
 }  // namespace EllipticCurveCryptography
