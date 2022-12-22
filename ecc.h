@@ -32,7 +32,7 @@ class FieldElement {
   static int trueDivModuleExp(const int& x, const int& y, const int& N);  // modeExp true div with %
 };
 
-class Point {
+class Point : public std::enable_shared_from_this<Point> {
  public:
   explicit Point(const int& x, const int& y, const int& a, const int& b);
 
@@ -42,11 +42,17 @@ class Point {
 
   bool operator!=(const std::shared_ptr<Point> other);
 
+  std::shared_ptr<Point> operator+(const std::shared_ptr<Point> other);  // addition of two points
+
+  void PrintPoint();  // print object
+
  private:
   int x = 0;  // X coordinate
   int y = 0;  // Y coordinate
   int a = 0;  // a coefficient
   int b = 0;  // b coefficient
+
+  bool isInfinity = false;  // infinity point setter
 };
 
 }  // namespace EllipticCurveCryptography

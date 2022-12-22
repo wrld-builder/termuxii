@@ -120,13 +120,17 @@ EllipticCurveCryptography::Point::Point(const int& x, const int& y, const int& a
   this->a = a;
   this->b = b;
 
-  try {
-    if (std::pow(y, 2) != std::pow(this->x, 3) + a * x + b) throw OverrideExceptions::PointNotOntheCurve();
-  } catch (OverrideExceptions::PointNotOntheCurve& exception) {
+  if (this->x == NULL && this->y == NULL) {
+    this->isInfinity = true;
+  } else {
+    try {
+      if (std::pow(y, 2) != std::pow(this->x, 3) + a * x + b) throw OverrideExceptions::PointNotOntheCurve();
+    } catch (OverrideExceptions::PointNotOntheCurve& exception) {
 #if DEBUG
-    std::cerr << exception.what() << std::endl;
+      std::cerr << exception.what() << std::endl;
 #endif
-    std::exit(EXCEPTION_POINT_NOT_IN_THE_CURVE_CODE);
+      std::exit(EXCEPTION_POINT_NOT_IN_THE_CURVE_CODE);
+    }
   }
 }
 
@@ -135,3 +139,30 @@ bool EllipticCurveCryptography::Point::operator==(const std::shared_ptr<Point> o
 }
 
 bool EllipticCurveCryptography::Point::operator!=(const std::shared_ptr<Point> other) { return !(this == other.get()); }
+
+std::shared_ptr<EllipticCurveCryptography::Point> EllipticCurveCryptography::Point::operator+(const std::shared_ptr<Point> other) {
+  try {
+    if (this->a != other->a || this->b != other->b) throw OverrideExceptions::PointNotOntheCurve();
+  } catch (OverrideExceptions::PointNotOntheCurve& exception) {
+#if DEBUG
+    std::cerr << exception.what() << std::endl;
+#endif
+    std::exit(EXCEPTION_POINT_NOT_IN_THE_CURVE_CODE);
+  }
+
+  if (this->x == NULL && other->isInfinity) {  // other because we need to compare __smb__ + __inf__ (rule)
+    return other;
+  } else if (other->x == NULL && other->isInfinity) {
+    return shared_from_this();
+  } else if (this->x == other->x && this->y != other->y) {
+    return std::make_shared<Point>(NULL, NULL, this->a, this->b);  // additional inverse
+  }
+}
+
+void EllipticCurveCryptography::Point::PrintPoint() {
+  if (this->x == NULL && this->y == NULL) {
+    std::cout << "Point: infinity" << std::endl;
+  } else {
+    std::cout << "Point: x: " << this->x << " y: " << this->y << " a: " << this->a << " b: " << this->b << std::endl;
+  }
+}
