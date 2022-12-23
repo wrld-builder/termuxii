@@ -156,6 +156,20 @@ std::shared_ptr<EllipticCurveCryptography::Point> EllipticCurveCryptography::Poi
     return shared_from_this();
   } else if (this->x == other->x && this->y != other->y) {
     return std::make_shared<Point>(NULL, NULL, this->a, this->b);  // additional inverse
+  } else if (this->x != other->x) {
+    auto s = (other->y - this->y) / (other->x - this->x);
+    auto xLocal = std::pow(s, 2) - this->x - other->x;
+    auto yLocal = s * (this->x - xLocal) - this->y;
+
+    return std::make_shared<Point>(xLocal, yLocal, this->a, this->b);
+  } else if (*this == other && this->y == 0 * this->x) {
+    return std::make_shared<Point>(NULL, NULL, this->a, this->b);
+  } else if (*this == other) {
+    int s = (int)(3 * std::pow(this->x, 2) + this->a) / (int)(2 * this->y);
+    int xLocal = (int)std::pow(s, 2) - (int)2 * this->x;
+    int yLocal = s * (this->x - xLocal) - this->y;
+
+    return std::make_shared<Point>(xLocal, yLocal, this->a, this->b);
   }
 }
 
