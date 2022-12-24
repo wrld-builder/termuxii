@@ -10,20 +10,30 @@ using EllipticCurveCryptography::FieldElement;
 using EllipticCurveCryptography::Point;
 
 int main() {
-  auto p1 = std::make_shared<Point>(Point(-1, -1, 5, 7));
-  auto p2 = std::make_shared<Point>(Point(-1, -1, 5, 7));
-  auto inf = std::make_shared<Point>(Point(NULL, NULL, 5, 7));
+  auto a = std::make_shared<FieldElement>(0, 223);
+  auto b = std::make_shared<FieldElement>(7, 223);
 
-  auto res = *p1 + p2;
-  res->PrintPoint();
+  auto x1 = std::make_shared<FieldElement>(192, 223);
+  auto y1 = std::make_shared<FieldElement>(105, 223);
+  auto p1 = std::make_shared<Point>(x1, y1, a, b);
+  p1->PrintPoint();
 
-  long double a = 5;
-  long double x1 = -1;
-  long double y1 = -1;
+  auto x2 = std::make_shared<FieldElement>(17, 223);
+  auto y2 = std::make_shared<FieldElement>(56, 223);
+  auto p2 = std::make_shared<Point>(x2, y2, a, b);
+  p2->PrintPoint();
 
-  auto s = (3 * std::pow(x1, 2) + a) / (2 * y1);
-  auto x3 = std::pow(s, 2) - 2 * x1;
-  auto y3 = s * (x1 - x3) - y1;
+  // auto x3 = std::make_shared<FieldElement>(200, 223);
+  // auto y3 = std::make_shared<FieldElement>(119, 223);
+  // auto p3 = std::make_shared<Point>(x3, y3, a, b);
 
-  std::cout << x3 << " " << y3 << std::endl;
+  auto x4 = std::make_shared<FieldElement>(1, 223);
+  auto y4 = std::make_shared<FieldElement>(193, 223);
+  auto p4 = std::make_shared<Point>(x4, y4, a, b);
+  p4->PrintPoint();
+
+  // auto x5 = std::make_shared<FieldElement>(42, 223);
+  // auto y5 = std::make_shared<FieldElement>(99, 223);
+  // auto p5 = std::make_shared<Point>(x5, y5, a, b);
+  // p5->PrintPoint();
 }

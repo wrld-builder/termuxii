@@ -38,7 +38,8 @@
   "files.associations": {
     "exception": "cpp",
     "iostream": "cpp",
-    "ostream": "cpp"
+    "ostream": "cpp",
+    "*.tcc": "cpp"
   },
   "C_Cpp.clang_format_fallbackStyle": "{ BasedOnStyle: Google, ColumnLimit: 140}",
   "C_Cpp.clang_format_style": "{ BasedOnStyle: Google, ColumnLimit: 140}",

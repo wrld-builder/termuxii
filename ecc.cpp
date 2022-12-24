@@ -114,7 +114,7 @@ int EllipticCurveCryptography::FieldElement::trueDivModuleExp(const int& x, cons
     return (x * z * z) % N;
 }
 
-EllipticCurveCryptography::Point::Point(const int& x, const int& y, const int& a, const int& b) {
+EllipticCurveCryptography::Point::Point(const double& x, const double& y, const double& a, const double& b) {
   this->x = x;
   this->y = y;
   this->a = a;
@@ -125,6 +125,39 @@ EllipticCurveCryptography::Point::Point(const int& x, const int& y, const int& a
   } else {
     try {
       if (std::pow(y, 2) != std::pow(this->x, 3) + a * x + b) throw OverrideExceptions::PointNotOntheCurve();
+    } catch (OverrideExceptions::PointNotOntheCurve& exception) {
+#if DEBUG
+      std::cerr << exception.what() << std::endl;
+#endif
+      std::exit(EXCEPTION_POINT_NOT_IN_THE_CURVE_CODE);
+    }
+  }
+}
+
+EllipticCurveCryptography::Point::Point(const std::shared_ptr<FieldElement> x, const std::shared_ptr<FieldElement> y,
+                                        const std::shared_ptr<FieldElement> a, const std::shared_ptr<FieldElement> b) {
+  this->xFieldElement = x;
+  this->yFieldElement = y;
+  this->aFieldElement = a;
+  this->bFieldElement = b;
+
+  if (this->xFieldElement == nullptr && this->yFieldElement == nullptr) {
+    isInfinity = true;
+  } else {
+    try {
+      auto leftPart = this->yFieldElement->Pow(2);
+
+      auto rightPartBuffer = this->xFieldElement->Pow(3);
+      auto rightDiffPart = *this->xFieldElement * a;
+      rightPartBuffer = *rightPartBuffer + rightDiffPart;
+      rightPartBuffer = *rightPartBuffer + b;
+
+#if DEBUG
+      std::cout << "Left part: " << leftPart->getNumber() << " Right part: " << rightPartBuffer->getNumber() << std::endl;
+#endif
+
+      // compare numbers of FieldElement, not objects!
+      if (leftPart->getNumber() != rightPartBuffer->getNumber()) throw OverrideExceptions::PointNotOntheCurve();
     } catch (OverrideExceptions::PointNotOntheCurve& exception) {
 #if DEBUG
       std::cerr << exception.what() << std::endl;
@@ -174,9 +207,23 @@ std::shared_ptr<EllipticCurveCryptography::Point> EllipticCurveCryptography::Poi
 }
 
 void EllipticCurveCryptography::Point::PrintPoint() {
-  if (this->x == NULL && this->y == NULL) {
-    std::cout << "Point: infinity" << std::endl;
+  if (this->xFieldElement != nullptr || this->yFieldElement != nullptr) {
+#if DEBUG
+    std::cout << "Point: x: FieldElement(" << this->xFieldElement->getNumber() << ", " << this->xFieldElement->getPrime()
+              << ") y: FieldElement(" << this->yFieldElement->getNumber() << ", " << this->yFieldElement->getPrime() << ") a: FieldElement("
+              << this->aFieldElement->getNumber() << ", " << this->aFieldElement->getPrime() << ") b: FieldElement("
+              << this->bFieldElement->getNumber() << ", " << this->bFieldElement->getPrime() << ")" << std::endl
+              << std::endl;
+#endif
   } else {
-    std::cout << "Point: x: " << this->x << " y: " << this->y << " a: " << this->a << " b: " << this->b << std::endl;
+    if (this->x == NULL && this->y == NULL) {
+#if DEBUG
+      std::cout << "Point: infinity" << std::endl;
+#endif
+    } else {
+#if DEBUG
+      std::cout << "Point: x: " << this->x << " y: " << this->y << " a: " << this->a << " b: " << this->b << std::endl;
+#endif
+    }
   }
 }

@@ -22,6 +22,10 @@ class FieldElement {
 
   std::shared_ptr<FieldElement> Pow(const int& exponent);  // pow the field element
 
+  inline int getPrime() const { return this->prime; }
+
+  inline int getNumber() const { return this->number; }
+
   void PrintFieldElement();  // print object
 
  private:
@@ -34,7 +38,10 @@ class FieldElement {
 
 class Point : public std::enable_shared_from_this<Point> {
  public:
-  explicit Point(const int& x, const int& y, const int& a, const int& b);
+  explicit Point(const double& x, const double& y, const double& a, const double& b);
+
+  explicit Point(const std::shared_ptr<FieldElement> x, const std::shared_ptr<FieldElement> y, const std::shared_ptr<FieldElement> a,
+                 const std::shared_ptr<FieldElement> b);
 
   inline ~Point(){};
 
@@ -47,12 +54,18 @@ class Point : public std::enable_shared_from_this<Point> {
   void PrintPoint();  // print object
 
  private:
-  int x = 0;  // X coordinate
-  int y = 0;  // Y coordinate
-  int a = 0;  // a coefficient
-  int b = 0;  // b coefficient
+  double x = 0;  // X coordinate
+  double y = 0;  // Y coordinate
+  double a = 0;  // a coefficient
+  double b = 0;  // b coefficient
 
   bool isInfinity = false;  // infinity point setter
+
+ protected:
+  std::shared_ptr<FieldElement> xFieldElement = nullptr;  // X coordinate
+  std::shared_ptr<FieldElement> yFieldElement = nullptr;  // Y coordinate
+  std::shared_ptr<FieldElement> aFieldElement = nullptr;  // a coefficient
+  std::shared_ptr<FieldElement> bFieldElement = nullptr;  // b coefficient
 };
 
 }  // namespace EllipticCurveCryptography
