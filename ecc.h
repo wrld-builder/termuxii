@@ -59,7 +59,8 @@ class Point : public std::enable_shared_from_this<Point> {
   double a = 0;  // a coefficient
   double b = 0;  // b coefficient
 
-  bool isInfinity = false;  // infinity point setter
+  bool isInfinity = false;           // infinity point setter
+  bool isFieldElementUsage = false;  // FieldElemet class usage
 
  protected:
   std::shared_ptr<FieldElement> xFieldElement = nullptr;  // X coordinate

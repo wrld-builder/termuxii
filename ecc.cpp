@@ -140,6 +140,7 @@ EllipticCurveCryptography::Point::Point(const std::shared_ptr<FieldElement> x, c
   this->yFieldElement = y;
   this->aFieldElement = a;
   this->bFieldElement = b;
+  this->isFieldElementUsage = true;
 
   if (this->xFieldElement == nullptr && this->yFieldElement == nullptr) {
     isInfinity = true;
@@ -183,26 +184,52 @@ std::shared_ptr<EllipticCurveCryptography::Point> EllipticCurveCryptography::Poi
     std::exit(EXCEPTION_POINT_NOT_IN_THE_CURVE_CODE);
   }
 
-  if (this->x == NULL && other->isInfinity) {  // other because we need to compare __smb__ + __inf__ (rule)
-    return other;
-  } else if (other->x == NULL && other->isInfinity) {
-    return shared_from_this();
-  } else if (this->x == other->x && this->y != other->y) {
-    return std::make_shared<Point>(NULL, NULL, this->a, this->b);  // additional inverse
-  } else if (this->x != other->x) {
-    auto s = (other->y - this->y) / (other->x - this->x);
-    auto xLocal = std::pow(s, 2) - this->x - other->x;
-    auto yLocal = s * (this->x - xLocal) - this->y;
+  if (!this->isFieldElementUsage) {
+    if (this->x == NULL && other->isInfinity) {  // other because we need to compare __smb__ + __inf__ (rule)
+      return other;
+    } else if (other->x == NULL && other->isInfinity) {
+      return shared_from_this();
+    } else if (this->x == other->x && this->y != other->y) {
+      return std::make_shared<Point>(NULL, NULL, this->a, this->b);  // additional inverse
+    } else if (this->x != other->x) {
+      auto s = (other->y - this->y) / (other->x - this->x);
+      auto xLocal = std::pow(s, 2) - this->x - other->x;
+      auto yLocal = s * (this->x - xLocal) - this->y;
 
-    return std::make_shared<Point>(xLocal, yLocal, this->a, this->b);
-  } else if (*this == other && this->y == 0 * this->x) {
-    return std::make_shared<Point>(NULL, NULL, this->a, this->b);
-  } else if (*this == other) {
-    int s = (int)(3 * std::pow(this->x, 2) + this->a) / (int)(2 * this->y);
-    int xLocal = (int)std::pow(s, 2) - (int)2 * this->x;
-    int yLocal = s * (this->x - xLocal) - this->y;
+      return std::make_shared<Point>(xLocal, yLocal, this->a, this->b);
+    } else if (*this == other && this->y == 0 * this->x) {
+      return std::make_shared<Point>(NULL, NULL, this->a, this->b);
+    } else if (*this == other) {
+      int s = (int)(3 * std::pow(this->x, 2) + this->a) / (int)(2 * this->y);
+      int xLocal = (int)std::pow(s, 2) - (int)2 * this->x;
+      int yLocal = s * (this->x - xLocal) - this->y;
 
-    return std::make_shared<Point>(xLocal, yLocal, this->a, this->b);
+      return std::make_shared<Point>(xLocal, yLocal, this->a, this->b);
+    }
+  } else {
+    if (this->xFieldElement == nullptr && other->isInfinity) {  // other because we need to compare __smb__ + __inf__ (rule)
+      return other;
+    } else if (other->xFieldElement == nullptr && other->isInfinity) {
+      return shared_from_this();
+    } else if (*this->xFieldElement == other->xFieldElement && *this->yFieldElement != other->yFieldElement) {
+      return std::make_shared<Point>(NULL, NULL, this->a, this->b);  // additional inverse
+    } else if (this->xFieldElement->getNumber() != other->xFieldElement->getNumber()) {
+      auto s = *(*other->yFieldElement - this->yFieldElement) / (*other->xFieldElement - this->xFieldElement);
+      auto xLocal = *(*s->Pow(2) - this->xFieldElement) - other->xFieldElement;
+      auto yLocal = *(*s * (*this->xFieldElement - xLocal)) - this->yFieldElement;
+
+      return std::make_shared<Point>(xLocal, yLocal, this->aFieldElement, this->bFieldElement);
+    } else if (*this == other && *this->yFieldElement == std::make_shared<FieldElement>(0, this->xFieldElement->getPrime())) {
+      return std::make_shared<Point>(nullptr, nullptr, this->aFieldElement, this->bFieldElement);
+    } else if (*this == other) {
+      auto s =
+          *(*(*std::make_shared<FieldElement>(3, this->xFieldElement->getPrime()) * this->xFieldElement->Pow(2)) + this->aFieldElement) /
+          (*std::make_shared<FieldElement>(2, this->xFieldElement->getPrime()) * this->yFieldElement);
+      auto xLocal = *(*s->Pow(2) - std::make_shared<FieldElement>(2, this->xFieldElement->getPrime())) * this->xFieldElement;
+      auto yLocal = *(*s * (*this->xFieldElement - xLocal)) - this->yFieldElement;
+
+      return std::make_shared<Point>(xLocal, yLocal, this->aFieldElement, this->bFieldElement);
+    }
   }
 }
 
